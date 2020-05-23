@@ -19,7 +19,7 @@ var sampleGraph = {
  };
 
     
-    export const GRAPH_PROCESSING = "notifyGraphFetching";
+    export const GRAPH_PROCESSING_STARTED = "notifyGraphFetching";
     export const GRAPH_FETCH_ERROR = "graphFetchError";
     export const GRAPH_FETCH_COMPLETED = "graphFetchCompleted";
     export const SELECT_POINT = "selectValue";
