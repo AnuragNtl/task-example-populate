@@ -25,6 +25,10 @@ function updateGraphProperties(oldGraph, graphData, graphFetchType) {
         case k.GRAPH_FETCH_TYPE_ID:
             graph.graphIdList = graphData;
             break;
+        case k.GRAPH_FETCH_TYPE_TASK:
+            graph.task = graphData;
+            break;
+
     }
     return Object.assign({}, oldGraph, graph);
 }

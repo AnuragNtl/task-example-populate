@@ -1,8 +1,7 @@
 import React from 'react';
 import {connect} from 'react-redux';
-import {GRAPH_PROCESSING, GRAPH_FETCH_COMPLETED} from "./actions/actions";
-import {fetchAllGraphIds} from "./actions/graphActions";
-import {GRAPH_STATES} from "./actions/constants";
+import {fetchAllGraphIds, fetchGraph} from "./actions/graphActions";
+import TaskView from "./TaskView";
 
 class Log extends React.Component {
   
@@ -10,7 +9,10 @@ class Log extends React.Component {
     super(props);
   }
 
-    :
+    componentDidMount() {
+        this.props.dispatch(fetchAllGraphIds());
+    }
+
   render() {
     return (
       <div className="log">
@@ -18,9 +20,9 @@ class Log extends React.Component {
       {this.props.status}
         </h2>
       <br />
-      {this.props.graphIds.map( graphId => ( <a onClick={() =>{}}>{graphId + " > "}</a> ))}
+      {this.props.graphIds.map( graphId => ( <a onClick={() => this.props.dispatch(fetchGraph(graphId))}>{graphId + " > "}</a> ))}
       <br />
-      <button onClick={() => this.props.dispatch(fetchAllGraphIds())}>::</button>
+       <TaskView /> 
       </div>
     );
   }

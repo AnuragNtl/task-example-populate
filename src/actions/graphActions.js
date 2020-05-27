@@ -11,9 +11,9 @@ query {
 }
 `;
 
-/*const getTaskQuery  = gql `
-
- getTask(id:$graphId, taskId:$subtaskId) {
+const getTaskQuery  = data => gql `
+ query {
+ getTask(id: "${data.id}", taskId: ${data.taskId}) {
     id,
     taskList,
     properties {
@@ -22,7 +22,7 @@ query {
     }
   }
 }
-*/
+`
 
 export const GRAPH_PROCESSING_STARTED = "notifyGraphFetching";
 export const GRAPH_FETCH_ERROR = "graphFetchError";
@@ -61,6 +61,21 @@ export function fetchAllGraphIds() {
            }
        ).catch(e => dispatch(graphFetchError(e)));
     }
+}
+
+export function fetchGraph(graphId, taskId = 0) {
+    return dispatch => {
+        dispatch(notifyGraphFetching());
+        let query = getTaskQuery({id:graphId, taskId});
+        server.query({query}, {id:graphId}).then(data => 
+            {
+            data.data.getTask.graphId = graphId;
+            dispatch(graphFetchCompleted(GRAPH_FETCH_TYPE_TASK, data.data.getTask))
+            }
+        ).catch(e =>
+            dispatch(graphFetchError(e))
+        );
+    };
 }
 
 /*export function fetchGraph(graphSearchData) {
