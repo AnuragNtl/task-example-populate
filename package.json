@@ -14,7 +14,9 @@
     "redux-thunk": "latest",
     "babel-polyfill": "latest",
     "redux-logger": "latest",
-    "prop-types": "latest"
+    "prop-types": "latest",
+    "apollo-boost": "apollo-boost",
+    "graphql": "latest"
   },
   "scripts": {
     "start": "react-scripts start",

@@ -8,7 +8,7 @@ import {Provider} from 'react-redux';
 import Log from "./log";
 
 function App() {
-  var store =  createStore(graph, {value:2}, applyMiddleware(thunkMiddleware));
+  var store =  createStore(graph, {graph:{}}, applyMiddleware(thunkMiddleware));
   return (
     <Provider store={store}>
     <Log />
