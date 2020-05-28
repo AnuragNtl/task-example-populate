@@ -27,14 +27,25 @@ const getTaskQuery  = data => gql `
 export const GRAPH_PROCESSING_STARTED = "notifyGraphFetching";
 export const GRAPH_FETCH_ERROR = "graphFetchError";
 export const GRAPH_FETCH_COMPLETED = "graphFetchCompleted";
+export const EMPTY_TASK_LIST = "emptyTaskList";
 
 
 export function notifyGraphFetching() {
     return {type:GRAPH_PROCESSING_STARTED};
 }
 
-export function graphFetchCompleted(graphFetchType, graphData) {
-    return {type: GRAPH_FETCH_COMPLETED, data: graphData, graphFetchType: graphFetchType};
+export function graphFetchCompleted(graphFetchType, graphData, isFetchedBefore) {
+    let description;
+    if(graphFetchType == GRAPH_FETCH_TYPE_TASK_COMPLETED) {
+        description = graphData.properties.filter(({key}) => key == "description");
+        if(description.length == 0) {
+                    description = "Desc" + graphData.id.toString();
+        } else {
+            description = description[0];
+        }
+    }
+    graphData.description = description;
+    return {type: graphFetchType, data: graphData, isFetchedBefore, fetchStatus:GRAPH_FETCH_COMPLETED};
 }
 
 export function graphFetchError(e) {
@@ -42,9 +53,9 @@ export function graphFetchError(e) {
 }
 
 
-export const GRAPH_FETCH_TYPE_ID = "graphFetchTypeId";
-export const GRAPH_FETCH_TYPE_TASK = "graphFetchTypeTask";
-export const GRAPH_FETCH_TYPE_UPDATE = "graphFetchTypeUpdate";
+export const GRAPH_FETCH_TYPE_ID_COMPLETED = "graphFetchTypeId";
+export const GRAPH_FETCH_TYPE_TASK_COMPLETED = "graphFetchTypeTask";
+export const GRAPH_FETCH_TYPE_UPDATE_COMPLETED = "graphFetchTypeUpdate";
 
 const TASK_SERVICE_ENDPOINT = "http://localhost:8082/graph";
 const GET_TASK_BY_ID_PATH = TASK_SERVICE_ENDPOINT + '/';
@@ -57,20 +68,23 @@ export function fetchAllGraphIds() {
         let query = getAllGraphIdsQuery;
        server.query({query}).then(data => 
            {
-               dispatch(graphFetchCompleted(GRAPH_FETCH_TYPE_ID, data.data.getAllTaskIds));
+               dispatch(graphFetchCompleted(GRAPH_FETCH_TYPE_ID_COMPLETED, data.data.getAllTaskIds));
            }
        ).catch(e => dispatch(graphFetchError(e)));
     }
 }
 
-export function fetchGraph(graphId, taskId = 0) {
+export function fetchGraph(graphId, taskId = null, isFetchedBefore = false, emptyTasks = false) {
     return dispatch => {
+        if(emptyTasks) {
+            dispatch(emptyTaskList());
+        }
         dispatch(notifyGraphFetching());
         let query = getTaskQuery({id:graphId, taskId});
         server.query({query}, {id:graphId}).then(data => 
             {
             data.data.getTask.graphId = graphId;
-            dispatch(graphFetchCompleted(GRAPH_FETCH_TYPE_TASK, data.data.getTask))
+            dispatch(graphFetchCompleted(GRAPH_FETCH_TYPE_TASK_COMPLETED, data.data.getTask, isFetchedBefore))
             }
         ).catch(e =>
             dispatch(graphFetchError(e))
@@ -78,15 +92,19 @@ export function fetchGraph(graphId, taskId = 0) {
     };
 }
 
-/*export function fetchGraph(graphSearchData) {
+export function fetchGraphBack(graphId, taskId = 0) {
 
-    return (dispatch) => {
-
-        dispatch(notifyGraphFetching());
-        ser
-        
-            dispatch(graphFetchCompleted(graphSearchData));
-    }
+    return fetchGraph(graphId, taskId, true);
 }
-*/
+
+export function emptyTaskList() {
+
+    return {type: EMPTY_TASK_LIST};
+}
+
+export const VALUE_CHANGE = "valueChange";
+
+export function valueChange(key, value) {
+    return (dispatch) => dispatch({type: VALUE_CHANGE, key, value});
+}
 

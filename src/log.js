@@ -2,6 +2,7 @@ import React from 'react';
 import {connect} from 'react-redux';
 import {fetchAllGraphIds, fetchGraph} from "./actions/graphActions";
 import TaskView from "./TaskView";
+import Breadcrumb from "./Breadcrumb";
 
 class Log extends React.Component {
   
@@ -19,9 +20,11 @@ class Log extends React.Component {
        <h2 class="status">
       {this.props.status}
         </h2>
+        { (this.props.error) ? (<h4> {JSON.stringify(this.props.error)} </h4> ) : "" }
       <br />
-      {this.props.graphIds.map( graphId => ( <a onClick={() => this.props.dispatch(fetchGraph(graphId))}>{graphId + " > "}</a> ))}
+      {this.props.graphIds.map( graphId => ( <a onClick={() => this.props.dispatch(fetchGraph(graphId, null, false, true))}>{graphId + " > "}</a> ))}
       <br />
+        <Breadcrumb />
        <TaskView /> 
       </div>
     );
@@ -29,7 +32,7 @@ class Log extends React.Component {
 };
 
 function mapStateToProps(state) {
-  return { status: state.graphStatus, graphIds: state.graph.graphIdList ? state.graph.graphIdList : []};
+  return { status: state.graphStatus.statusText, error: state.graphStatus.error , graphIds: state.graphIdList ? state.graphIdList : []};
 }
 
 function mapDispatchToProps(dispatch, state) {
