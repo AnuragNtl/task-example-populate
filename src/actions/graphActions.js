@@ -2,7 +2,7 @@
 import ApolloBoost, {gql} from 'apollo-boost';
 
 const server = new ApolloBoost({
-    uri: 'http://localhost:8082/graph' 
+    uri: 'http://192.168.43.28:8082/graph' 
 });
 
 const getAllGraphIdsQuery = gql `
@@ -15,7 +15,10 @@ const getTaskQuery  = data => gql `
  query {
  getTask(id: "${data.id}", taskId: ${data.taskId}) {
     id,
-    taskList,
+    taskList {
+      taskId,
+      description
+    },
     properties {
       key,
       value
@@ -23,15 +26,43 @@ const getTaskQuery  = data => gql `
   }
 }
 `
+const propertiesGql = properties => "[" + properties.map( ({key, value}) =>
+    `{key:"${key}",\n value:"${value}"}\n`).join(",") + "]";
+    
+
+const updateTaskQuery = ({id, task}) => gql `
+
+mutation
+{
+  updateValues(id:"${id}", task: {
+    properties: ${propertiesGql(task.properties)},
+    id: ${task.id} 
+  }) {
+    status,
+    message
+  }
+}
+`;
+
+const duplicateTaskQuery = ({id, taskId}) => gql `
+
+mutation {
+  duplicateEntry(id:"${id}", taskId:${taskId}) {
+    message
+    status
+  }
+}
+`;
 
 export const GRAPH_PROCESSING_STARTED = "notifyGraphFetching";
 export const GRAPH_FETCH_ERROR = "graphFetchError";
 export const GRAPH_FETCH_COMPLETED = "graphFetchCompleted";
 export const EMPTY_TASK_LIST = "emptyTaskList";
+export const GRAPH_STATUS = "graphStatus";
 
 
 export function notifyGraphFetching() {
-    return {type:GRAPH_PROCESSING_STARTED};
+    return {type:GRAPH_STATUS, fetchStatus:GRAPH_PROCESSING_STARTED};
 }
 
 export function graphFetchCompleted(graphFetchType, graphData, isFetchedBefore) {
@@ -49,7 +80,7 @@ export function graphFetchCompleted(graphFetchType, graphData, isFetchedBefore) 
 }
 
 export function graphFetchError(e) {
-    return {type: GRAPH_FETCH_ERROR, error: e};
+    return {type:GRAPH_STATUS, fetchStatus: GRAPH_FETCH_ERROR, error: e};
 }
 
 
@@ -92,6 +123,34 @@ export function fetchGraph(graphId, taskId = null, isFetchedBefore = false, empt
     };
 }
 
+function notifyGraphCompletion(status, message) {
+    return {type: GRAPH_STATUS, fetchStatus : GRAPH_FETCH_TYPE_UPDATE_COMPLETED, status, message};
+}
+
+export function updateGraph(graphId, task) {
+
+    return dispatch => {
+        dispatch(notifyGraphFetching());
+        let mutation = updateTaskQuery({id:graphId, task});
+        server.mutate({mutation}).then(data => {
+        
+            dispatch(notifyGraphCompletion(data.data.updateValues.status));
+            
+        }).catch(err => dispatch(graphFetchError(err)));
+    };
+}
+
+export function duplicateEntry(graphId, taskId) {
+    return dispatch => {
+        dispatch(notifyGraphFetching());
+        let mutation = duplicateTaskQuery({id:graphId, taskId});
+        server.mutate({mutation}).then(data => {
+
+            dispatch(notifyGraphCompletion(data.data.duplicateEntry.status));
+        }).catch(err => dispatch(graphFetchError(err)));
+    };
+}
+
 export function fetchGraphBack(graphId, taskId = 0) {
 
     return fetchGraph(graphId, taskId, true);
@@ -107,4 +166,5 @@ export const VALUE_CHANGE = "valueChange";
 export function valueChange(key, value) {
     return (dispatch) => dispatch({type: VALUE_CHANGE, key, value});
 }
+
 

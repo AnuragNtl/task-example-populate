@@ -4,19 +4,20 @@ import { combineReducers } from 'redux';
 
 export function graphStatus(state = {graphStatus:"none"}, action) {
     let statusText = state;
-    const {GRAPH_PROCESSING_STARTED, GRAPH_FETCH_COMPLETED, GRAPH_FETCH_ERROR} = k;
-    switch(action.type) {
+    const {GRAPH_PROCESSING_STARTED, GRAPH_FETCH_COMPLETED, GRAPH_FETCH_ERROR, GRAPH_FETCH_TYPE_UPDATE_COMPLETED} = k;
+    switch(action.fetchStatus) {
         case GRAPH_PROCESSING_STARTED : graphStatus = {statusText: GRAPH_STATES.FETCHING};
             break;
         case GRAPH_FETCH_ERROR: 
             graphStatus = {statusText:GRAPH_STATES.FETCH_ERROR, error: action.error};
             break;
+        case GRAPH_FETCH_TYPE_UPDATE_COMPLETED:
+            graphStatus = {statusText:action.status};
+            break;
+        case GRAPH_FETCH_COMPLETED: graphStatus = {statusText:GRAPH_STATES.FETCHED};
+            break;
         default:
             return state;
-            break;
-    }
-    switch(action.fetchStatus) {
-        case GRAPH_FETCH_COMPLETED: graphStatus = {statusText:GRAPH_STATES.FETCHED};
             break;
     }
     return Object.assign({}, state, {...graphStatus});
@@ -34,7 +35,7 @@ export function taskPath(state = [], action) {
            if(action.isFetchedBefore) 
                 path = state.slice(0, state.map(p => p.taskId).indexOf(parseInt(action.data.id)) + 1);
             else {
-                path = state.concat([{taskId: action.data.id, description: action.data.description}]);
+                path = state.concat([{taskId: action.data.id, description: action.data.description.value}]);
                 console.log(graph.taskPath + " " + JSON.stringify(path));
             }
             return path;
@@ -66,9 +67,9 @@ function properties(state = [], action) {
             }
             return propertyList;
         default:
-            return [];
+            return state;
     }
-    return [];
+    return state;
 }
 
 
