@@ -35,7 +35,7 @@ export function taskPath(state = [], action) {
            if(action.isFetchedBefore) 
                 path = state.slice(0, state.map(p => p.taskId).indexOf(parseInt(action.data.id)) + 1);
             else {
-                path = state.concat([{taskId: action.data.id, description: action.data.description.value}]);
+                path = state.concat([{taskId: action.data.id, description: action.data.description}]);
                 console.log(graph.taskPath + " " + JSON.stringify(path));
             }
             return path;

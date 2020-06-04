@@ -1,0 +1,43 @@
+div#graphIdsContainer
+{
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: flex-start;
+    align-items: baseline;
+}
+
+#graphIdsContainer a {
+    margin: 4px;
+    cursor: pointer;
+    border-bottom-style: dotted;
+    border-bottom-right-radius:20px;
+    border-bottom-left-radius:20px;
+    padding-left: 20px;
+    padding-right: 20px;
+    color: #010240;
+    border-left-style: none;
+    font-size:30px;
+    margin-right:10px;
+}
+
+#graphIdsContainer a:nth-child(even) {
+
+    border-top-style: dotted;
+    border-top-left-radius:20px;
+    border-top-right-radius:20px;
+    border-bottom-style:none;
+    border-bottom-right-radius:0px;
+}
+
+.status {
+
+    color:green;
+
+}
+
+.error {
+
+    color:red;
+}
+
+

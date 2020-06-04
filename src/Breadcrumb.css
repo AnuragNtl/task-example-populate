@@ -1,0 +1,23 @@
+#breadcrumbContainer
+{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: baseline;
+}
+
+.breadcrumbItems {
+    margin: 4px;
+    cursor: pointer;
+    border-style: dashed;
+        border-left-style: dashed;
+    border-bottom-right-radius: 20px;
+    border-top-right-radius: 20px;
+    padding-left: 20px;
+    padding-right: 20px;
+    background-color: #234548;
+    color: white;
+    border-left-style: none;
+}
+

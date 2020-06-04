@@ -3,6 +3,7 @@ import {connect} from 'react-redux';
 import {fetchAllGraphIds, fetchGraph} from "./actions/graphActions";
 import TaskView from "./TaskView";
 import Breadcrumb from "./Breadcrumb";
+import "./log.css";
 
 class Log extends React.Component {
   
@@ -17,12 +18,14 @@ class Log extends React.Component {
   render() {
     return (
       <div className="log">
-       <h2 class="status">
+       <h5 className="status">
       {this.props.status}
-        </h2>
-        { (this.props.error) ? (<h4> {JSON.stringify(this.props.error)} </h4> ) : "" }
+        </h5>
+        { (this.props.error) ? (<h5 className="error"> {JSON.stringify(this.props.error)} </h5> ) : "" }
       <br />
-      {this.props.graphIds.map( graphId => ( <a onClick={() => this.props.dispatch(fetchGraph(graphId, null, false, true))}>{graphId + " > "}</a> ))}
+            <div id="graphIdsContainer">
+      {this.props.graphIds.map( graphId => ( <a onClick={() => this.props.dispatch(fetchGraph(graphId, null, false, true))}>{graphId}</a> ))}
+        </div>
       <br />
         <Breadcrumb />
        <TaskView /> 

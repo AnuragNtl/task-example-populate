@@ -1,6 +1,7 @@
 import React from 'react';
 import {connect} from 'react-redux';
 import {fetchGraphBack} from "./actions/graphActions";
+import './Breadcrumb.css'
 
 class BreadCrumb extends React.Component {
 
@@ -12,10 +13,14 @@ class BreadCrumb extends React.Component {
 
         const {graphId, taskPath} = this.props;
         
-        return taskPath.map(({taskId, description}) => 
+        return (
+            <div id="breadcrumbContainer">
+         {taskPath.map(({taskId, description}) => 
 
-        <a onClick={() => this.props.dispatch(fetchGraphBack(graphId, taskId))}>{description}</a>
-        );
+             <h3>
+        <a className="breadcrumbItems" onClick={() => this.props.dispatch(fetchGraphBack(graphId, taskId))}>{description}</a> </h3>
+        )}
+            </div> );
     }
 };
 
