@@ -2,7 +2,7 @@
 import ApolloBoost, {gql} from 'apollo-boost';
 
 const server = new ApolloBoost({
-    uri: 'http://192.168.43.28:8082/graph' 
+	uri: 'http://localhost:8082/graph' 
 });
 
 const getAllGraphIdsQuery = gql `
@@ -72,7 +72,7 @@ export function graphFetchCompleted(graphFetchType, graphData, isFetchedBefore) 
         if(description.length == 0) {
                     description = "Desc" + graphData.id.toString();
         } else {
-            description = description[0];
+            description = description[0].value;
         }
     }
     graphData.description = description;
