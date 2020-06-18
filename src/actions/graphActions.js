@@ -21,13 +21,22 @@ const getTaskQuery  = data => gql `
     },
     properties {
       key,
-      value
+      value,
+      type,
+      options
     }
   }
 }
 `
-const propertiesGql = properties => "[" + properties.map( ({key, value}) =>
-    `{key:"${key}",\n value:"${value}"}\n`).join(",") + "]";
+const optionsListGql = options => {
+
+    if(options == null) return null;
+    else return JSON.stringify(options);
+
+}
+
+const propertiesGql = properties => "[" + properties.map( ({key, value, type, options}) =>
+    `{key:"${key}",\n value:"${value}", type:"${type}", options:${optionsListGql(options)} }\n`).join(",") + "]";
     
 
 const updateTaskQuery = ({id, task}) => gql `

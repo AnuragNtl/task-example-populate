@@ -19,7 +19,9 @@ class TaskData extends Component {
             {this.props.task.taskList
                 .map(({taskId, description}) => <li><h3><a onClick = {() => this.props.dispatch(fetchGraph(this.props.task.graphId, taskId))}> {description}</a> </h3></li>)}
         </ul>
-            {this.props.task.properties.map(({key, value}) => (<div className="editable"><div>{key}</div>  <div><input type={parseInt(value) == value ? 'number' : 'text'} value={value} onChange={(e) => this.props.dispatch(valueChange(key, e.target.value))}/></div></div>))}
+            {this.props.task.properties.map(({key, value, type, options}) => (<div className="editable"><div>{key}</div>  <div>
+                {this.getAppropriateInput(key, value, type, options)}
+                </div></div>))}
             <div id="actionContainer">
         <button onClick = {() => this.props.dispatch(updateGraph(this.props.task.graphId, this.props.task)) }> Update </button>
             <button onClick={() => this.props.dispatch(duplicateEntry(this.props.task.graphId, this.props.task.id))}> Duplicate Entry </button>
@@ -27,6 +29,35 @@ class TaskData extends Component {
             </div>
         );
     }
+
+    getAppropriateInput(key, value, type, options) {
+
+        let changeHandler = (e) => this.props.dispatch(valueChange(key, e.target.value));
+
+        switch(type) {
+
+            case 'string' : 
+                return (<input type="text" value={value} onChange={changeHandler}/>);
+                break;
+            case 'number':
+                return (<input type="number" value={value} onChange={changeHandler}/>);
+            case 'object':
+                return (
+                    <select onChange={changeHandler}>
+
+                    {options.map(option => (<option value =  {value + (value === option ? "selected" : "" )}> </option>))}
+                    </select>
+                );
+            case 'boolean':
+                return (<input type="checkbox" defaultChecked={value == "true"} onChange={(e) => this.props.dispatch(valueChange(key, e.target.checked))}/>);
+
+            default:
+                throw "no handling for type " + type ;
+
+
+        }
+    }
+
 }
 
 export default connect(({graph}) => {  return { ...graph } })(TaskData);
