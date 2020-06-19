@@ -45,7 +45,7 @@ class TaskData extends Component {
                 return (
                     <select onChange={changeHandler} defaultValue={value}>
 
-                    {options.map(option => (<option value={option}> </option>))}
+                    {options.map(option => (<option value={option}> {option} </option>))}
                     </select>
                 );
             case 'boolean':
