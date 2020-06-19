@@ -43,9 +43,9 @@ class TaskData extends Component {
                 return (<input type="number" value={value} onChange={changeHandler}/>);
             case 'object':
                 return (
-                    <select onChange={changeHandler}>
+                    <select onChange={changeHandler} defaultValue={value}>
 
-                    {options.map(option => (<option value =  {value + (value === option ? "selected" : "" )}> </option>))}
+                    {options.map(option => (<option value={option}> </option>))}
                     </select>
                 );
             case 'boolean':
