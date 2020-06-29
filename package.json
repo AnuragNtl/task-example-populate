@@ -16,7 +16,8 @@
     "redux-logger": "latest",
     "prop-types": "latest",
     "apollo-boost": "apollo-boost",
-    "graphql": "latest"
+    "graphql": "latest",
+    "@material-ui/core": "latest"
   },
   "scripts": {
     "start": "react-scripts start",

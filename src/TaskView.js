@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {fetchGraph, valueChange, updateGraph, duplicateEntry} from "./actions/graphActions";
 import "./TaskView.css";
+import {Button, Switch, Select, MenuItem} from '@material-ui/core';
 
 class TaskData extends Component {
 
@@ -23,8 +24,8 @@ class TaskData extends Component {
                 {this.getAppropriateInput(key, value, type, options)}
                 </div></div>))}
             <div id="actionContainer">
-        <button onClick = {() => this.props.dispatch(updateGraph(this.props.task.graphId, this.props.task)) }> Update </button>
-            <button onClick={() => this.props.dispatch(duplicateEntry(this.props.task.graphId, this.props.task.id))}> Duplicate Entry </button>
+        <Button onClick = {() => this.props.dispatch(updateGraph(this.props.task.graphId, this.props.task)) }> Update </Button>
+            <Button onClick={() => this.props.dispatch(duplicateEntry(this.props.task.graphId, this.props.task.id))}> Duplicate Entry </Button>
             </div>
             </div>
         );
@@ -43,13 +44,14 @@ class TaskData extends Component {
                 return (<input type="number" value={value} onChange={changeHandler}/>);
             case 'object':
                 return (
-                    <select onChange={changeHandler} defaultValue={value}>
+                    <Select onChange={changeHandler} defaultValue={value}>
 
-                    {options.map(option => (<option value={option}> {option} </option>))}
-                    </select>
+                    {options.map(option => (<MenuItem value={option}> {option} </MenuItem>))}
+                    </Select>
                 );
             case 'boolean':
-                return (<input type="checkbox" defaultChecked={value == "true"} onChange={(e) => this.props.dispatch(valueChange(key, e.target.checked))}/>);
+                value = ( value == "false" ? false : value);
+                return (<Switch  checked={value} onChange={(e) => this.props.dispatch(valueChange(key, e.target.checked))}/>);
 
             default:
                 throw "no handling for type " + type ;
